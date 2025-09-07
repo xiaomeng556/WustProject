@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>筛选功能简单测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .filter-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        .result-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 5px; background: #f9f9f9; }
+        select, button { padding: 8px; margin: 5px; border-radius: 3px; border: 1px solid #ccc; }
+        button { background: #007bff; color: white; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>活动筛选功能测试</h1>
+        
+        <div class="filter-section">
+            <h2>筛选条件</h2>
+            <div>
+                <label>校区:</label>
+                <select id="campusFilter">
+                    <option value="">全部校区</option>
+                    <option value="huangjiahu">黄家湖校区</option>
+                    <option value="hongshan">洪山校区</option>
+                    <option value="qingshan">青山校区</option>
+                </select>
+            </div>
+            <div>
+                <label>学院:</label>
+                <select id="collegeFilter">
+                    <option value="">全部学院</option>
+                    <option value="计算机科学与技术学院">计算机科学与技术学院</option>
+                    <option value="电气与电子工程学院">电气与电子工程学院</option>
+                    <option value="机械自动化学院">机械自动化学院</option>
+                    <option value="管理学院">管理学院</option>
+                    <option value="理学院">理学院</option>
+                    <option value="外国语学院">外国语学院</option>
+                    <option value="医学院">医学院</option>
+                    <option value="艺术学院">艺术学院</option>
+                </select>
+            </div>
+            <div>
+                <label>活动类型:</label>
+                <select id="typeFilter">
+                    <option value="">全部类型</option>
+                    <option value="leisure">休闲娱乐</option>
+                    <option value="study">学习互助</option>
+                    <option value="skill">技能合作</option>
+                    <option value="sports">运动健身</option>
+                    <option value="practice">实践活动</option>
+                    <option value="other">其他</option>
+                </select>
+            </div>
+            <button onclick="testFilter()">测试筛选</button>
+            <button onclick="testHealth()">测试健康检查</button>
+            <button onclick="debugColleges()">查看数据库学院信息</button>
+            <button onclick="showAllActivities()">查看所有活动</button>
+        </div>
+
+        <div class="result-section">
+            <h2>测试结果</h2>
+            <div id="result">点击按钮开始测试...</div>
+        </div>
+    </div>
+
+    <script>
+        function showAllActivities() {
+            document.getElementById('result').innerHTML = '<span class="info">正在获取所有活动...</span>';
+            
+            fetch('/api/activities/all-activities')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 0) {
+                        let resultHtml = '<span class="success">✓ 所有活动:</span><br>';
+                        data.data.forEach(activity => {
+                            resultHtml += `<div style="border: 1px solid #ddd; margin: 5px; padding: 10px; border-radius: 3px;">
+                                <strong>${activity.title}</strong><br>
+                                学院: ${activity.college || '未设置'}<br>
+                                校区: ${activity.campus || '未设置'}<br>
+                                类型: ${activity.type || '未设置'}<br>
+                                状态: ${activity.status || '未设置'}
+                            </div>`;
+                        });
+                        document.getElementById('result').innerHTML = resultHtml;
+                    } else {
+                        document.getElementById('result').innerHTML = 
+                            '<span class="error">✗ 获取失败: ' + data.msg + '</span>';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = 
+                        '<span class="error">✗ 请求错误: ' + error.message + '</span>';
+                });
+        }
+
+        function debugColleges() {
+            document.getElementById('result').innerHTML = '<span class="info">正在获取数据库信息...</span>';
+            
+            fetch('/api/activities/debug-colleges')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 0) {
+                        document.getElementById('result').innerHTML = 
+                            '<span class="success">✓ 数据库信息:</span><br>' +
+                            '<pre style="background: #f0f0f0; padding: 10px; border-radius: 3px; overflow-x: auto;">' + 
+                            data.data + '</pre>';
+                    } else {
+                        document.getElementById('result').innerHTML = 
+                            '<span class="error">✗ 获取失败: ' + data.msg + '</span>';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = 
+                        '<span class="error">✗ 请求错误: ' + error.message + '</span>';
+                });
+        }
+
+        function testHealth() {
+            document.getElementById('result').innerHTML = '<span class="info">正在测试健康检查...</span>';
+            
+            fetch('/api/activities/health')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 0) {
+                        document.getElementById('result').innerHTML = 
+                            '<span class="success">✓ 健康检查成功: ' + data.data + '</span>';
+                    } else {
+                        document.getElementById('result').innerHTML = 
+                            '<span class="error">✗ 健康检查失败: ' + data.msg + '</span>';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = 
+                        '<span class="error">✗ 请求错误: ' + error.message + '</span>';
+                });
+        }
+
+        function testFilter() {
+            const campus = document.getElementById('campusFilter').value;
+            const college = document.getElementById('collegeFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            
+            document.getElementById('result').innerHTML = '<span class="info">正在测试筛选功能...</span>';
+            
+            // 构建URL
+            let url = '/api/activities/test-filter?';
+            if (campus) url += `campus=${encodeURIComponent(campus)}&`;
+            if (college) url += `college=${encodeURIComponent(college)}&`;
+            if (type) url += `type=${encodeURIComponent(type)}&`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 0) {
+                        document.getElementById('result').innerHTML = 
+                            '<span class="success">✓ 筛选测试成功: ' + data.data + '</span><br>' +
+                            '<span class="info">请求URL: ' + url + '</span>';
+                    } else {
+                        document.getElementById('result').innerHTML = 
+                            '<span class="error">✗ 筛选测试失败: ' + data.msg + '</span>';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = 
+                        '<span class="error">✗ 请求错误: ' + error.message + '</span>';
+                });
+        }
+
+        // 页面加载时自动测试健康检查
+        window.onload = function() {
+            testHealth();
+        };
+    </script>
+</body>
+</html> 

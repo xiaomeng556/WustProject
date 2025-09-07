@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/mywust/mywust/pom.xml" />
+        <option value="$PROJECT_DIR$/mywust/Wust-helper-basic/pom.xml" />
+        <option value="$PROJECT_DIR$/CatCampus/pom.xml" />
+        <option value="$PROJECT_DIR$/campusmate/campusmate/pom.xml" />
+        <option value="$PROJECT_DIR$/second-hand-transactions - (添加注释)/pom.xml" />
+        <option value="$PROJECT_DIR$/Wust-helper-basic/pom.xml" />
+        <option value="$PROJECT_DIR$/Wust-helper-basic/mywust-lib/pom.xml" />
+        <option value="$PROJECT_DIR$/mywust/pom.xml" />
+        <option value="$PROJECT_DIR$/campusmate/pom.xml" />
+        <option value="$PROJECT_DIR$/wust_helper_competition/pom.xml" />
+      </list>
+    </option>
+    <option name="workspaceImportForciblyTurnedOn" value="true" />
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

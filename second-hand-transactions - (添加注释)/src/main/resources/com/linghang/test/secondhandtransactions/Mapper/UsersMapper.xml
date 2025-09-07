@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linghang.test.secondhandtransactions.Mapper.UsersMapper">
+
+    <resultMap id="BaseResultMap" type="com.linghang.test.secondhandtransactions.Entity.Users">
+            <id property="id" column="id" />
+            <result property="uid" column="uid" />
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,uid
+    </sql>
+    <!-- 添加收藏 -->
+    <insert id="insertCollection">
+        INSERT INTO user_collection (uid, pid, collection_time)
+        VALUES (#{arg0}, #{arg1}, NOW())
+    </insert>
+
+    <!-- 取消收藏 -->
+    <delete id="deleteCollection">
+        DELETE FROM user_collection
+        WHERE uid = #{arg0} AND pid = #{arg1}
+    </delete>
+
+    <!-- 查询用户收藏列表（关联商品信息） -->
+    <select id="selectUserCollections" resultType="com.linghang.test.secondhandtransactions.Entity.User_collection">
+        SELECT uc.*, c.name AS commodity_name, c.price, c.status
+        FROM user_collection uc
+                 LEFT JOIN commodity c ON uc.pid = c.pid
+        WHERE uc.uid = #{arg0}
+        ORDER BY uc.collection_time DESC
+    </select>
+
+</mapper>

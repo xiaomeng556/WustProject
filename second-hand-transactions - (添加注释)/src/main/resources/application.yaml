@@ -1,0 +1,59 @@
+
+spring:
+  mvc:
+    matching-strategy: ant_path_matcher
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/secondhand?useSSL=false&serverTimezone=UTC&useInformationSchema=true&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  application:
+    name: second-hand-transactions-nacos
+  cloud:
+    nacos:
+      #      负责在nacos服务中心中注册服务
+      discovery:
+        server-addr: 127.0.0.1:8848
+        #        username: nacos
+        #        password: nacos
+        namespace: 07fdd106-1b32-4ec8-9d19-f9fc46f5efd3
+      #        config下的配置负责读取nacos配置中心对应的配置
+      config:
+        #        username: nacos
+        #        password: nacos
+        #        contextPath: /nacos
+        server-addr: 127.0.0.1:8848
+        namespace: 07fdd106-1b32-4ec8-9d19-f9fc46f5efd3
+    #        file-extension: yaml
+    #        prefix: nacos-config
+    #        group:
+    #  config:
+    #    import: nacos:nacos-config-dev.yaml
+
+
+  servlet:
+        multipart:
+          max-file-size: 10MB
+          max-request-size: 100MB
+
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+upload:
+  file:
+    location: D:\javaio\SPTest\src\main\resources\static\upload
+tencent:
+  tms:
+    secret-id: AKDahCRQ9bolQovlKccMpB
+    secret-key: tWswkHXWEenfCpCI7fxxhA
+    biz-type: test_demo
+server:
+  port: 8082

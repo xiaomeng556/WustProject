@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="mywust-common" />
+        <module name="second-hand-transactions" />
+        <module name="mywust-core" />
+        <module name="CatCampus" />
+        <module name="campusmate" />
+        <module name="wust-helper-competition" />
+        <module name="mywust-util" />
+      </profile>
+      <profile name="Annotation profile for mywust" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$PROJECT_DIR$/../../../Tools/Maven/maven-repository/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="mywust_basic" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="mywust (1)" target="1.8" />
+      <module name="mywust-common (1)" target="1.8" />
+      <module name="mywust-core (1)" target="1.8" />
+      <module name="mywust-network" target="1.8" />
+      <module name="mywust-network-httpclient" target="1.8" />
+      <module name="mywust-network-okhttp" target="1.8" />
+      <module name="mywust-test" target="1.8" />
+      <module name="mywust-util (1)" target="1.8" />
+      <module name="Wust-helper-basic" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="CatCampus" options="-parameters" />
+      <module name="campusmate" options="-parameters" />
+      <module name="mywust_basic" options="-parameters" />
+      <module name="wust-helper-competition" options="-parameters" />
+    </option>
+  </component>
+</project>

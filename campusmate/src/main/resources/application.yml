@@ -1,0 +1,42 @@
+server:
+  port: 8083
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/campusmate?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 1234 #原密码是root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  application:
+    name: campusmate
+    #  profiles:
+    #    active: dev
+    cloud:
+      nacos:
+        #      负责在nacos服务中心中注册服务
+        discovery:
+          server-addr: 127.0.0.1:8848
+          #        username: nacos
+          #        password: nacos
+          namespace: 56a91bfe-1462-4a8a-92ea-328cd17f4770
+        #        config下的配置负责读取nacos配置中心对应的配置
+        config:
+          #        username: nacos
+          #        password: nacos
+          #        contextPath: /nacos
+          server-addr: 127.0.0.1:8848
+          namespace: 56a91bfe-1462-4a8a-92ea-328cd17f4770
+  #        file-extension: yaml
+  #        prefix: nacos-config
+  #        group:
+  #  config:
+  #    import: nacos:nacos-config-dev.yaml
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai

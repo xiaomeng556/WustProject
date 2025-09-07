@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/CatCampus/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-common/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-network-httpclient/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-network-httpclient/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-network-okhttp/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-network-okhttp/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-network/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-network/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-test/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-test/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-util/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/mywust-util/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust-lib/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/Wust-helper-basic/mywust-lib/mywust-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/Wust-helper-basic/mywust-lib/mywust-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/Wust-helper-basic/mywust-lib/mywust-network-httpclient/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/Wust-helper-basic/mywust-lib/mywust-network-okhttp/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/Wust-helper-basic/mywust-lib/mywust-network-okhttp/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/Wust-helper-basic/mywust-lib/mywust-network/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/Wust-helper-basic/mywust-lib/mywust-util/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/Wust-helper-basic/mywust-lib/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/Wust-helper-basic/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/mywust/mywust-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/mywust/mywust-common/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/mywust/mywust-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/mywust/mywust-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/mywust/mywust-util/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/mywust/mywust-util/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/mywust/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/mywust/mywust/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Wust-helper-basic/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/campusmate/campusmate/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/campusmate/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/Wust-helper-basic/mywust-lib/mywust-common/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/Wust-helper-basic/mywust-lib/mywust-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/Wust-helper-basic/mywust-lib/mywust-network-httpclient/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/Wust-helper-basic/mywust-lib/mywust-network/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/Wust-helper-basic/mywust-lib/mywust-test/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/Wust-helper-basic/mywust-lib/mywust-test/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/Wust-helper-basic/mywust-lib/mywust-util/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/Wust-helper-basic/mywust-lib/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/Wust-helper-basic/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/mywust-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/mywust-common/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/mywust-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/mywust-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/mywust-util/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/mywust-util/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/mywust_basic/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mywust/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/second-hand-transactions - (添加注释)/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/second-hand-transactions - (添加注释)/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/wust_helper_competition/src/main/java" charset="UTF-8" />
+  </component>
+</project>

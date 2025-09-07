@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>校园搭子 - 寻找你的同伴</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto { content-visibility: auto; }
+      .badge-college { @apply inline-block px-2 py-1 rounded-full text-xs font-medium text-white; }
+      .activity-tag { @apply inline-flex items-center justify-center px-2 py-1 text-xs font-medium rounded-sm; }
+      .activity-school { @apply activity-tag bg-blue-100 text-blue-800 rounded-none; }
+      .activity-college { @apply activity-tag bg-green-100 text-green-800 rounded-full; }
+      .card-hover { @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1; }
+      .floating-button { @apply fixed bottom-6 right-6 z-50 bg-indigo-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-indigo-700 transition-all duration-300 transform hover:scale-110; }
+      .modal-container { @apply hidden fixed inset-0 z-50 flex items-center justify-center p-4; }
+      .modal-overlay { @apply absolute inset-0 bg-black bg-opacity-50; }
+      .modal-content {
+        @apply relative bg-white rounded-xl shadow-xl w-full max-w-md p-6 z-10 max-h-[90vh] overflow-y-auto;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans">
+<!-- 导航栏 -->
+<nav id="mainNav" class="fixed w-full bg-white shadow-md z-50 transition-all duration-300">
+  <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-2">
+      <i class="fa fa-users text-2xl text-indigo-600"></i>
+      <span class="text-xl font-bold text-gray-800">校园搭子</span>
+    </div>
+    <div class="hidden md:flex items-center space-x-6">
+      <a href="#" class="text-indigo-600 font-medium">首页</a>
+      <a href="#myPosts" class="text-gray-700 hover:text-indigo-600 transition-colors">我的</a>
+    </div>
+    <div class="flex items-center space-x-4">
+      <div id="userMenu" class="flex items-center space-x-2">
+        <img src="https://picsum.photos/id/64/40/40" alt="用户头像" class="w-8 h-8 rounded-full object-cover border-2 border-indigo-600">
+        <span class="text-gray-700">张同学</span>
+        <i class="fa fa-caret-down text-gray-500"></i>
+      </div>
+      <button id="mobileMenuBtn" class="md:hidden text-gray-700">
+        <i class="fa fa-bars text-xl"></i>
+      </button>
+      <div class="relative">
+        <button id="notificationBtn" class="relative text-gray-600 hover:text-indigo-600">
+          <i class="fa fa-bell text-xl"></i>
+          <span id="notificationDot" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 hidden"></span>
+        </button>
+        <div id="notificationPanel" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl z-50 border">
+          <div class="p-4 border-b flex justify-between items-center">
+            <span class="font-bold text-gray-800">通知</span>
+            <button id="closeNotificationPanel" class="text-gray-400 hover:text-gray-600"><i class="fa fa-times"></i></button>
+          </div>
+          <div id="notificationList" class="max-h-80 overflow-y-auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
+    <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+      <a href="#" class="py-2 text-indigo-600 font-medium">首页</a>
+      <a href="#myPosts" class="py-2 text-gray-700 hover:text-indigo-600 transition-colors">我的</a>
+    </div>
+  </div>
+</nav>
+
+<!-- 发帖按钮 -->
+<button class="floating-button" title="发布新搭子信息" id="floatingPostBtn">
+  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+  </svg>
+</button>
+
+<!-- 主内容区 -->
+<main class="container mx-auto px-4 pt-24 pb-16">
+  <div id="homePage" class="space-y-8">
+    <!-- 筛选区 -->
+    <section class="bg-white rounded-xl shadow-sm p-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <h2 class="text-xl font-bold text-gray-800">寻找搭子</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">校区</label>
+            <select id="campusFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+              <option value="all">全部校区</option>
+              <option value="huangjiahu">黄家湖校区</option>
+              <option value="hongshan">洪山校区</option>
+              <option value="qingshan">青山校区</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">学院</label>
+            <select id="collegeFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+              <option value="all">全部学院</option>
+              <option value="理学院">理学院</option>
+              <option value="材料与冶金学院">材料与冶金学院</option>
+              <option value="机械自动化学院">机械自动化学院</option>
+              <option value="信息科学与工程学院">信息科学与工程学院</option>
+              <option value="管理学院">管理学院</option>
+              <option value="外国语学院">外国语学院</option>
+              <option value="医学院">医学院</option>
+              <option value="资源与环境工程学院">资源与环境工程学院</option>
+              <option value="建筑与城市规划学院">建筑与城市规划学院</option>
+              <option value="自动化学院">自动化学院</option>
+              <option value="国际学院">国际学院</option>
+              <option value="香涛学院">香涛学院</option>
+              <option value="化学与化工学院">化学与化工学院</option>
+              <option value="土木工程与建筑学院">土木工程与建筑学院</option>
+              <option value="计算机科学与技术学院">计算机科学与技术学院</option>
+              <option value="电气与电子工程学院">电气与电子工程学院</option>
+              <option value="数学与统计学院">数学与统计学院</option>
+              <option value="物理与光电工程学院">物理与光电工程学院</option>
+              <option value="经济与管理学院">经济与管理学院</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">搭子类型</label>
+            <select id="typeFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+              <option value="all">全部类型</option>
+              <option value="leisure">休闲娱乐类</option>
+              <option value="study">学习互助类</option>
+              <option value="skill">技能合作类</option>
+              <option value="sports">运动健身类</option>
+              <option value="practice">实践活动类</option>
+              <option value="other">其他类</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- 活动列表 -->
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-gray-800">推荐搭子</h2>
+      </div>
+      <div class="space-y-6" id="activityList"></div>
+    </section>
+  </div>
+</main>
+
+<!-- 评论模态框 -->
+<div id="commentModal" class="modal-container" style="display:none">
+  <div class="modal-overlay"></div>
+  <div class="modal-content">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold text-gray-900">留言</h3>
+      <button class="close-btn text-gray-400 hover:text-gray-600">
+        <i class="fa fa-times text-xl"></i>
+      </button>
+    </div>
+    <div id="commentList" class="space-y-4 max-h-60 overflow-y-auto"></div>
+    <form id="commentForm" class="mt-4 flex gap-2">
+      <input type="text" id="commentInput" class="flex-1 px-3 py-2 border rounded-lg" placeholder="写下你的留言..." required>
+      <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">发送</button>
+    </form>
+  </div>
+</div>
+
+<!-- 发帖模态框 -->
+<div id="postModal" class="modal-container">
+  <div class="modal-overlay"></div>
+  <div class="modal-content max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold text-gray-900">发布新搭子信息</h3>
+      <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600">
+        <i class="fa fa-times text-xl"></i>
+      </button>
+    </div>
+    <form id="postForm" class="space-y-4">
+      <div>
+        <label for="title" class="block text-sm font-medium text-gray-700 mb-1">标题</label>
+        <input type="text" id="title" name="title" required
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">内容</label>
+        <textarea id="description" name="description" rows="4" required
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+      </div>
+      <div>
+        <label for="campus" class="block text-sm font-medium text-gray-700 mb-1">校区</label>
+        <select id="campus" name="campus" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="">请选择校区</option>
+          <option value="huangjiahu">黄家湖</option>
+          <option value="hongshan">洪山区</option>
+          <option value="qingshan">青山区</option>
+        </select>
+      </div>
+      <div>
+        <label for="college" class="block text-sm font-medium text-gray-700 mb-1">学院</label>
+        <select id="college" name="college" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="">请选择学院</option>
+          <option value="理学院">理学院</option>
+          <option value="材料与冶金学院">材料与冶金学院</option>
+          <option value="机械自动化学院">机械自动化学院</option>
+          <option value="信息科学与工程学院">信息科学与工程学院</option>
+          <option value="管理学院">管理学院</option>
+          <option value="外国语学院">外国语学院</option>
+          <option value="医学院">医学院</option>
+          <option value="资源与环境工程学院">资源与环境工程学院</option>
+          <option value="建筑与城市规划学院">建筑与城市规划学院</option>
+          <option value="自动化学院">自动化学院</option>
+          <option value="国际学院">国际学院</option>
+          <option value="香涛学院">香涛学院</option>
+          <option value="化学与化工学院">化学与化工学院</option>
+          <option value="土木工程与建筑学院">土木工程与建筑学院</option>
+          <option value="计算机科学与技术学院">计算机科学与技术学院</option>
+          <option value="电气与电子工程学院">电气与电子工程学院</option>
+          <option value="数学与统计学院">数学与统计学院</option>
+          <option value="物理与光电工程学院">物理与光电工程学院</option>
+          <option value="经济与管理学院">经济与管理学院</option>
+        </select>
+      </div>
+      <div>
+        <label for="type" class="block text-sm font-medium text-gray-700 mb-1">活动类型</label>
+        <select id="type" name="type" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="">请选择活动类型</option>
+          <option value="leisure">休闲娱乐</option>
+          <option value="study">学习互助</option>
+          <option value="skill">技能合作</option>
+          <option value="sports">运动健身</option>
+          <option value="practice">实践活动</option>
+          <option value="other">其他</option>
+        </select>
+      </div>
+      <div>
+        <label for="activityTime" class="block text-sm font-medium text-gray-700 mb-1">活动时间</label>
+        <input type="datetime-local" id="activityTime" name="activityTime" required
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+      <div>
+        <label for="expireTime" class="block text-sm font-medium text-gray-700 mb-1">报名截止时间</label>
+        <input type="datetime-local" id="expireTime" name="expireTime" required
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+      <div>
+        <label for="location" class="block text-sm font-medium text-gray-700 mb-1">活动地点</label>
+        <input type="text" id="location" name="location" required
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+      <div>
+        <label for="minPeople" class="block text-sm font-medium text-gray-700 mb-1">最低参与人数</label>
+        <input type="number" id="minPeople" name="minPeople" required min="1"
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+      <div>
+        <label for="maxPeople" class="block text-sm font-medium text-gray-700 mb-1">最高参与人数</label>
+        <input type="number" id="maxPeople" name="maxPeople" required min="1"
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+      <div class="pt-2">
+        <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
+          <svg class="w-4 h-4 mr-2 inline-block" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+          </svg> 发布
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="applyModal" class="modal-container" style="display:none">
+  <div class="modal-overlay"></div>
+  <div class="modal-content">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold text-gray-900">申请成为搭子</h3>
+      <button class="close-btn text-gray-400 hover:text-gray-600">
+        <i class="fa fa-times text-xl"></i>
+      </button>
+    </div>
+    <form id="applyForm" class="space-y-4">
+      <div>
+        <label for="applyReason" class="block text-sm font-medium text-gray-700 mb-1">申请理由</label>
+        <textarea id="applyReason" rows="3" required class="w-full px-3 py-2 border rounded-lg"></textarea>
+      </div>
+      <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">提交申请</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // 模拟登录：在实际应用中，token应该在登录后从后端获取并存储
+  localStorage.setItem('authToken', 'your-fake-jwt-token-for-user-1');
+
+  // 封装一个带认证的fetch函数
+  function fetchWithAuth(url, options = {}) {
+    const token = localStorage.getItem('authToken');
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+    if (token) {
+      headers['Authorization'] = `Wuster ${token}`;
+    }
+    return fetch(url, { ...options, headers });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // 筛选
+    const campusFilter = document.getElementById('campusFilter');
+    const collegeFilter = document.getElementById('collegeFilter');
+    const typeFilter = document.getElementById('typeFilter');
+
+    if (campusFilter) campusFilter.addEventListener('change', loadActivitiesWithFilter);
+    if (collegeFilter) collegeFilter.addEventListener('change', loadActivitiesWithFilter);
+    if (typeFilter) typeFilter.addEventListener('change', loadActivitiesWithFilter);
+
+    // 动态加载活动列表
+    function loadActivitiesWithFilter() {
+      const campus = campusFilter ? campusFilter.value : '';
+      const college = collegeFilter ? collegeFilter.value : '';
+      const type = typeFilter ? typeFilter.value : '';
+      let url = '/api/activities?';
+      if (campus && campus !== 'all') url += `campus=${encodeURIComponent(campus)}&`;
+      if (college && college !== 'all') url += `college=${encodeURIComponent(college)}&`;
+      if (type && type !== 'all') url += `type=${encodeURIComponent(type)}&`;
+      fetch(url)
+              .then(res => res.json())
+              .then(resp => {
+                if (resp.code === 0) {
+                  renderActivities(resp.data);
+                }
+              });
+    }
+
+    function renderActivities(list) {
+      const container = document.getElementById('activityList');
+      if (!container) return;
+      container.innerHTML = list.map(activity => `
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover">
+            <div class="p-6 space-y-4">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                  <img src="${activity.avatarUrl || 'https://picsum.photos/60/60'}" alt="用户头像" class="w-12 h-12 rounded-full object-cover">
+                  <div>
+                    <h3 class="font-semibold text-gray-900">${activity.creatorName || '匿名'}</h3>
+                    <div class="flex items-center gap-1 mt-0.5">
+                      <span class="text-xs font-medium px-2 py-0.5 rounded-full" style="background:${getCollegeColor(activity.college)};color:#fff;">
+                        ${activity.college || ''}
+                      </span>
+                      <span class="text-xs text-gray-500">${activity.campus || ''}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex gap-1">
+                  <button class="text-gray-400 hover:text-red-500 transition-colors" onclick="likeActivity(${activity.id})">
+                    <i class="fa fa-heart-o"></i>
+                  </button>
+                  <button class="text-gray-400 hover:text-indigo-500 transition-colors" onclick="favoriteActivity(${activity.id})">
+                    <i class="fa fa-bookmark-o"></i>
+                  </button>
+                </div>
+              </div>
+              <p class="text-gray-600 text-sm">${activity.description || ''}</p>
+              <div class="flex flex-wrap gap-2">
+                ${(activity.tags || '').split(',').map(tag => `<span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">${tag}</span>`).join('')}
+              </div>
+              <div class="pt-2 border-t border-gray-100">
+                <div class="flex items-center text-sm">
+                  <i class="fa fa-tag text-indigo-500 mr-2"></i>
+                  <span class="text-gray-700">${activity.type || ''}</span>
+                </div>
+              </div>
+              <div class="pt-2 border-t border-gray-100 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                  <button class="text-gray-500 hover:text-indigo-600 text-sm transition-colors" onclick="showComments(${activity.id})">
+                    <i class="fa fa-comment-o mr-1"></i> 留言
+                  </button>
+                  <span class="text-gray-400 text-sm">${activity.commentCount || 0}条留言</span>
+                </div>
+                ${activity.applied ?
+              `<button class="px-3 py-1.5 bg-gray-400 text-white text-sm rounded-lg" disabled>已申请</button>` :
+              `<button class="px-3 py-1.5 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition-colors contact-btn" onclick="openContactModal(${activity.id})">联系TA</button>`
+      }
+              </div>
+            </div>
+          </div>
+        `).join('');
+    }
+
+    function getCollegeColor(college) {
+      const colorMap = {
+        '计算机科学与技术学院': '#3B82F6',
+        '电气与电子工程学院': '#F97316',
+        '机械自动化学院': '#14B8A6',
+        '管理学院': '#F59E0B',
+        '外国语学院': '#10B981',
+        '数学与统计学院': '#8B5CF6',
+        '化学与化工学院': '#F59E0B',
+        '材料与冶金学院': '#3B82F6',
+        '土木工程与建筑学院': '#14B8A6',
+        '自动化学院': '#0EA5E9',
+        '信息科学与工程学院': '#60A5FA',
+        '资源与环境工程学院': '#8B5CF6',
+        '医学院': '#EF4444',
+        '理学院': '#F97316',
+        '国际学院': '#6366F1',
+        '建筑与城市规划学院': '#EC4899',
+        '香涛学院': '#10B981',
+        '物理与光电工程学院': '#EC4899',
+        '经济与管理学院': '#60A5FA'
+      };
+      return colorMap[college] || '#6366F1';
+    }
+
+    // 点赞/收藏
+    window.likeActivity = function(activityId) {
+      fetchWithAuth(`/api/activities/${activityId}/like`, { method: 'POST' })
+              .then(res => res.json())
+              .then(resp => {
+                if (resp.code === 0) loadActivitiesWithFilter();
+                else alert(resp.msg || '点赞失败');
+              });
+    };
+    window.favoriteActivity = function(activityId) {
+      fetchWithAuth(`/api/activities/${activityId}/favorite`, { method: 'POST' })
+              .then(res => res.json())
+              .then(resp => {
+                if (resp.code === 0) loadActivitiesWithFilter();
+                else alert(resp.msg || '收藏失败');
+              });
+    };
+
+    // 评论系统
+    let currentCommentActivityId = null;
+    window.showComments = function(activityId) {
+      currentCommentActivityId = activityId;
+      loadComments(activityId);
+      document.getElementById('commentModal').style.display = 'flex';
+    };
+    function closeCommentModal() {
+      document.getElementById('commentModal').style.display = 'none';
+      currentCommentActivityId = null;
+    }
+    document.querySelectorAll('#commentModal .close-btn, #commentModal .modal-overlay').forEach(btn => {
+      btn.addEventListener('click', closeCommentModal);
+    });
+    function loadComments(activityId) {
+      fetchWithAuth(`/api/comments/activity/${activityId}`)
+              .then(res => res.json())
+              .then(resp => {
+                if (resp.code === 0) renderComments(resp.data);
+              });
+    }
+    function renderComments(list) {
+      const container = document.getElementById('commentList');
+      if (!container) return;
+      if (!list.length) {
+        container.innerHTML = '<div class="text-gray-400 text-sm text-center">暂无留言</div>';
+        return;
+      }
+      container.innerHTML = list.map(comment => `
+          <div class="flex items-start gap-2">
+            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">${comment.userName ? comment.userName[0] : '匿'}</div>
+            <div>
+              <div class="text-xs text-gray-700 font-semibold">${comment.userName || '匿名'}</div>
+              <div class="text-gray-600 text-sm">${comment.content}</div>
+              <div class="text-xs text-gray-400">${comment.createdAt || ''}</div>
+            </div>
+          </div>
+        `).join('');
+    }
+    const commentForm = document.getElementById('commentForm');
+    if (commentForm) {
+      commentForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const content = document.getElementById('commentInput').value.trim();
+        if (!content || !currentCommentActivityId) return;
+        fetchWithAuth('/api/comments', {
+          method: 'POST',
+          body: JSON.stringify({
+            activityId: currentCommentActivityId,
+            content
+          })
+        })
+                .then(res => res.json())
+                .then(resp => {
+                  if (resp.code === 0) {
+                    document.getElementById('commentInput').value = '';
+                    loadComments(currentCommentActivityId);
+                    loadActivitiesWithFilter();
+                  } else {
+                    alert(resp.msg || '留言失败');
+                  }
+                });
+      });
+    }
+
+    // 发帖模态框
+    const postModal = document.getElementById('postModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modalOverlay = document.querySelector('#postModal .modal-overlay');
+    const floatingPostBtn = document.getElementById('floatingPostBtn');
+    function openPostModal() {
+      postModal.style.display = 'flex';
+      setTimeout(() => {
+        postModal.classList.add('opacity-100');
+      }, 10);
+    }
+    function closePostModal() {
+      postModal.style.display = 'none';
+    }
+    if (floatingPostBtn) floatingPostBtn.addEventListener('click', openPostModal);
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closePostModal);
+    if (modalOverlay) modalOverlay.addEventListener('click', closePostModal);
+
+    // 发帖表单提交
+    const postForm = document.getElementById('postForm');
+    if (postForm) {
+      postForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const data = {
+          title: postForm.title.value,
+          description: postForm.description.value,
+          campus: postForm.campus.value,
+          college: postForm.college.value,
+          type: postForm.type.value,
+          activityTime: postForm.activityTime.value,
+          expireTime: postForm.expireTime.value,
+          location: postForm.location.value,
+          minPeople: parseInt(postForm.minPeople.value, 10), // 新增
+          maxPeople: parseInt(postForm.maxPeople.value, 10) // 新增
+        };
+        fetchWithAuth('/api/activities', {
+          method: 'POST',
+          body: JSON.stringify(data)
+        })
+                .then(res => res.json())
+                .then(resp => {
+                  if (resp.code === 0) {
+                    alert('帖子发布成功！');
+                    closePostModal();
+                    postForm.reset();
+                    loadActivitiesWithFilter();
+                  } else {
+                    alert(resp.msg || '发布失败');
+                  }
+                });
+      });
+    }
+
+    let currentApplyActivityId = null;
+
+    // 打开申请模态框
+    window.openContactModal = function(activityId) {
+      currentApplyActivityId = activityId;
+      document.getElementById('applyReason').value = '';
+      document.getElementById('applyModal').style.display = 'flex';
+    };
+
+    // 关闭申请模态框
+    function closeApplyModal() {
+      document.getElementById('applyModal').style.display = 'none';
+      currentApplyActivityId = null;
+    }
+    document.querySelectorAll('#applyModal .close-btn, #applyModal .modal-overlay').forEach(btn => {
+      btn.addEventListener('click', closeApplyModal);
+    });
+
+    // 提交申请
+    const applyForm = document.getElementById('applyForm');
+    if (applyForm) {
+      applyForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const reason = document.getElementById('applyReason').value.trim();
+        if (!reason || !currentApplyActivityId) return;
+        fetchWithAuth(`/api/activities/${currentApplyActivityId}/apply?reason=${encodeURIComponent(reason)}`, {
+          method: 'POST'
+        })
+                .then(res => res.json())
+                .then(resp => {
+                  if (resp.code === 0) {
+                    alert('申请已提交！');
+                    closeApplyModal();
+                    loadActivitiesWithFilter();
+                  } else {
+                    alert(resp.msg || '申请失败');
+                  }
+                });
+      });
+    }
+
+    // 通知相关
+    const notificationBtn = document.getElementById('notificationBtn');
+    const notificationPanel = document.getElementById('notificationPanel');
+    const notificationDot = document.getElementById('notificationDot');
+    const notificationList = document.getElementById('notificationList');
+    const closeNotificationPanel = document.getElementById('closeNotificationPanel');
+
+    let notifications = [];
+
+    function loadNotifications() {
+      fetchWithAuth(`/api/notifications`)
+              .then(res => res.json())
+              .then(resp => {
+                if (resp.code === 0) {
+                  notifications = resp.data || [];
+                  renderNotifications();
+                }
+              });
+    }
+
+    function renderNotifications() {
+      // 红点
+      const unreadCount = notifications.filter(n => !n.isRead).length;
+      if (unreadCount > 0) {
+        notificationDot.textContent = unreadCount;
+        notificationDot.classList.remove('hidden');
+      } else {
+        notificationDot.classList.add('hidden');
+      }
+      // 列表
+      if (!notifications.length) {
+        notificationList.innerHTML = '<div class="text-gray-400 text-sm text-center py-6">暂无通知</div>';
+        return;
+      }
+      notificationList.innerHTML = notifications.map(n => `
+          <div class="p-3 border-b last:border-0 flex items-start gap-2 ${n.isRead ? 'bg-white' : 'bg-indigo-50'}">
+            <div class="flex-1">
+              <div class="text-sm text-gray-800">${n.content}</div>
+              <div class="text-xs text-gray-400 mt-1">${n.createdAt || ''}</div>
+            </div>
+            ${!n.isRead ? `<button class="text-xs text-indigo-600 underline" onclick="markNotificationRead(${n.id})">标为已读</button>` : ''}
+          </div>
+        `).join('');
+    }
+
+    // 标记为已读
+    window.markNotificationRead = function(notifyId) {
+      fetchWithAuth(`/api/notifications/${notifyId}/read`, { method: 'PUT' })
+              .then(res => res.json())
+              .then(resp => {
+                if (resp.code === 0) {
+                  loadNotifications();
+                }
+              });
+    };
+
+    // 打开/关闭通知面板
+    if (notificationBtn) {
+      notificationBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        notificationPanel.classList.toggle('hidden');
+        if (!notificationPanel.classList.contains('hidden')) {
+          loadNotifications();
+        }
+      });
+    }
+    if (closeNotificationPanel) {
+      closeNotificationPanel.addEventListener('click', function() {
+        notificationPanel.classList.add('hidden');
+      });
+    }
+    // 点击页面其他地方关闭通知面板
+    document.addEventListener('click', function(e) {
+      if (!notificationPanel.contains(e.target) && e.target !== notificationBtn) {
+        notificationPanel.classList.add('hidden');
+      }
+    });
+
+    // 页面初始化时加载一次通知
+    loadNotifications();
+
+    // 页面初始化
+    loadActivitiesWithFilter();
+
+    const tabMyCreated = document.getElementById('tabMyCreated');
+    const tabMyApplied = document.getElementById('tabMyApplied');
+    const myPostsContainer = document.getElementById('myPostsContainer');
+
+    let myTab = 'created';
+
+    if (tabMyCreated) tabMyCreated.addEventListener('click', function() {
+      myTab = 'created';
+      tabMyCreated.classList.add('bg-indigo-600', 'text-white');
+      tabMyApplied.classList.remove('bg-indigo-600', 'text-white');
+      tabMyApplied.classList.add('bg-gray-200', 'text-gray-800');
+      loadMyPosts();
+    });
+    if (tabMyApplied) tabMyApplied.addEventListener('click', function() {
+      myTab = 'applied';
+      tabMyApplied.classList.add('bg-indigo-600', 'text-white');
+      tabMyCreated.classList.remove('bg-indigo-600', 'text-white');
+      tabMyCreated.classList.add('bg-gray-200', 'text-gray-800');
+      loadMyPosts();
+    });
+
+    function loadMyPosts() {
+      if (myTab === 'created') {
+        fetchWithAuth(`/api/activities/user/created`)
+                .then(res => res.json())
+                .then(resp => {
+                  if (resp.code === 0) {
+                    renderMyCreated(resp.data);
+                  }
+                });
+      } else {
+        fetchWithAuth(`/api/activities/user/applications`)
+                .then(res => res.json())
+                .then(resp => {
+                  if (resp.code === 0) {
+                    renderMyApplied(resp.data);
+                  }
+                });
+      }
+    }
+
+    function renderMyCreated(list) {
+      if (!list.length) {
+        myPostsContainer.innerHTML = '<div class="text-center py-12 text-gray-500">您还没有发布任何帖子</div>';
+        return;
+      }
+      myPostsContainer.innerHTML = list.map(activity => `
+          <div class="bg-white rounded-xl shadow-sm p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <div class="font-bold text-lg text-gray-800">${activity.title}</div>
+              <div class="text-gray-500 text-sm">${activity.campus} | ${activity.college} | ${activity.type}</div>
+              <div class="text-gray-600 mt-2">${activity.description}</div>
+            </div>
+            <div class="flex gap-2">
+              <button class="px-3 py-1 bg-red-100 text-red-600 rounded-lg" onclick="deleteActivity(${activity.id})">删除</button>
+            </div>
+          </div>
+        `).join('');
+    }
+
+    function renderMyApplied(list) {
+      if (!list.length) {
+        myPostsContainer.innerHTML = '<div class="text-center py-12 text-gray-500">您还没有申请任何活动</div>';
+        return;
+      }
+      myPostsContainer.innerHTML = list.map(app => `
+          <div class="bg-white rounded-xl shadow-sm p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <div class="font-bold text-lg text-gray-800">${app.activityTitle || ''}</div>
+              <div class="text-gray-500 text-sm">${app.campus || ''} | ${app.college || ''} | ${app.activityType || ''}</div>
+              <div class="text-gray-600 mt-2">${app.reason ? '申请理由：' + app.reason : ''}</div>
+              <div class="text-xs mt-1">状态：${app.status || ''}</div>
+            </div>
+          </div>
+        `).join('');
+    }
+
+    // 删除活动
+    window.deleteActivity = function(activityId) {
+      if (!confirm('确定要删除该活动吗？')) return;
+      fetchWithAuth(`/api/activities/${activityId}`, { method: 'DELETE' })
+              .then(res => res.json())
+              .then(resp => {
+                if (resp.code === 0) {
+                  alert('删除成功');
+                  loadMyPosts();
+                  loadActivitiesWithFilter();
+                } else {
+                  alert(resp.msg || '删除失败');
+                }
+              });
+    };
+
+    // 页面初始化时加载“我的帖子”
+    if (window.location.hash === '#myPosts') {
+      loadMyPosts();
+    }
+  });
+</script>
+</body>
+</html>

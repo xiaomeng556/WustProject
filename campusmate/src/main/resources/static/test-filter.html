@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>筛选功能测试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6">活动筛选功能测试</h1>
+        
+        <!-- 筛选控件 -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4">筛选条件</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">校区</label>
+                    <select id="campusFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option value="">全部校区</option>
+                        <option value="huangjiahu">黄家湖校区</option>
+                        <option value="hongshan">洪山校区</option>
+                        <option value="qingshan">青山校区</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">学院</label>
+                    <select id="collegeFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option value="">全部学院</option>
+                        <option value="computer">计算机科学与技术学院</option>
+                        <option value="electrical">电气与电子工程学院</option>
+                        <option value="mechanical">机械自动化学院</option>
+                        <option value="management">管理学院</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">活动类型</label>
+                    <select id="typeFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option value="">全部类型</option>
+                        <option value="leisure">休闲娱乐</option>
+                        <option value="study">学习互助</option>
+                        <option value="skill">技能合作</option>
+                        <option value="sports">运动健身</option>
+                        <option value="practice">实践活动</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+            </div>
+            <button id="testFilterBtn" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                测试筛选
+            </button>
+        </div>
+
+        <!-- 测试结果 -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">测试结果</h2>
+            <div id="testResult" class="text-gray-600">点击"测试筛选"按钮查看结果</div>
+        </div>
+
+        <!-- API调用示例 -->
+        <div class="bg-white rounded-lg shadow p-6 mt-6">
+            <h2 class="text-lg font-semibold mb-4">API调用示例</h2>
+            <div class="space-y-2 text-sm">
+                <div class="bg-gray-100 p-3 rounded">
+                    <strong>获取所有活动:</strong> GET /api/activities
+                </div>
+                <div class="bg-gray-100 p-3 rounded">
+                    <strong>按校区筛选:</strong> GET /api/activities?campus=huangjiahu
+                </div>
+                <div class="bg-gray-100 p-3 rounded">
+                    <strong>按学院筛选:</strong> GET /api/activities?college=computer
+                </div>
+                <div class="bg-gray-100 p-3 rounded">
+                    <strong>按类型筛选:</strong> GET /api/activities?type=leisure
+                </div>
+                <div class="bg-gray-100 p-3 rounded">
+                    <strong>组合筛选:</strong> GET /api/activities?campus=huangjiahu&college=computer&type=leisure
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const campusFilter = document.getElementById('campusFilter');
+            const collegeFilter = document.getElementById('collegeFilter');
+            const typeFilter = document.getElementById('typeFilter');
+            const testFilterBtn = document.getElementById('testFilterBtn');
+            const testResult = document.getElementById('testResult');
+
+            testFilterBtn.addEventListener('click', function() {
+                const campus = campusFilter.value;
+                const college = collegeFilter.value;
+                const type = typeFilter.value;
+
+                // 构建URL
+                let url = '/api/activities/test-filter?';
+                if (campus) url += `campus=${encodeURIComponent(campus)}&`;
+                if (college) url += `college=${encodeURIComponent(college)}&`;
+                if (type) url += `type=${encodeURIComponent(type)}&`;
+
+                // 显示请求URL
+                testResult.innerHTML = `
+                    <div class="mb-4">
+                        <strong>请求URL:</strong> <code class="bg-gray-100 px-2 py-1 rounded">${url}</code>
+                    </div>
+                    <div>
+                        <strong>正在测试...</strong>
+                    </div>
+                `;
+
+                // 发送请求
+                fetch(url)
+                    .then(res => res.json())
+                    .then(resp => {
+                        if (resp.code === 0) {
+                            testResult.innerHTML = `
+                                <div class="mb-4">
+                                    <strong>请求URL:</strong> <code class="bg-gray-100 px-2 py-1 rounded">${url}</code>
+                                </div>
+                                <div class="text-green-600">
+                                    <strong>测试成功!</strong> ${resp.data}
+                                </div>
+                            `;
+                        } else {
+                            testResult.innerHTML = `
+                                <div class="mb-4">
+                                    <strong>请求URL:</strong> <code class="bg-gray-100 px-2 py-1 rounded">${url}</code>
+                                </div>
+                                <div class="text-red-600">
+                                    <strong>测试失败:</strong> ${resp.msg}
+                                </div>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        testResult.innerHTML = `
+                            <div class="mb-4">
+                                <strong>请求URL:</strong> <code class="bg-gray-100 px-2 py-1 rounded">${url}</code>
+                            </div>
+                            <div class="text-red-600">
+                                <strong>请求错误:</strong> ${error.message}
+                            </div>
+                        `;
+                    });
+            });
+        });
+    </script>
+</body>
+</html> 
